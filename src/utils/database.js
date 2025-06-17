@@ -1,15 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-
-const dbPath = path.resolve(__dirname, '../../databases/follower_history.json');
-
-// Ensure the database file exists
-if (!fs.existsSync(dbPath)) {
-    fs.writeFileSync(dbPath, JSON.stringify({}));
-}
+// In-memory storage for serverless environment
+let db = {};
 
 const saveFollowerCount = async (username, followersCount) => {
-    const db = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
     const timestamp = new Date().toISOString();
 
     if (!db[username]) {
@@ -18,11 +10,13 @@ const saveFollowerCount = async (username, followersCount) => {
 
     db[username].push({ timestamp, followersCount });
 
-    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2));
+    // Limit history to last 100 entries to manage memory
+    if (db[username].length > 100) {
+        db[username] = db[username].slice(-100);
+    }
 };
 
 const getFollowerHistory = async (username) => {
-    const db = JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
     return db[username] || [];
 };
 
