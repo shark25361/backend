@@ -24,29 +24,43 @@ export interface Post {
   video_views?: number;
 }
 
-export interface Metrics {
-  overallEngagementRate: string;
-  averageLikesPerFollower: string;
-  followerFollowingRatio: string;
-  averagePostingFrequency: string;
-  bestPostingWindows: Array<{
-    timeSlot: string;
-    avgEngagement: number;
-  }>;
+export interface PostingWindow {
+  posts: number;
+  engagement: number;
+}
+
+export interface HashtagStat {
+  tag: string;
+  count: number;
+  engagement: number;
+}
+
+export interface CaptionStats {
+  averageLength: number;
+  percentLongCaptions: number;
+}
+
+export interface PostTypeStats {
+  type: string;
+  avgEngagement: number;
+  avgViews: number;
+  count: number;
+}
+
+export interface MetricsResult {
+  engagementRate: number;
+  avgLikesPerPost: number;
+  avgCommentsPerPost: number;
+  followerFollowingRatio: number;
+  postingFrequency: number;                           // days between posts
+  postingWindows: Record<string, PostingWindow>;
+  hashtagStats: HashtagStat[];
+  captionStats: CaptionStats;
+  postTypePerformance: PostTypeStats[];
   topPosts: {
     topEngagement: Post & { totalEngagement: number } | null;
     topViews: Post | null;
   };
-  hashtagAnalysis: Array<{
-    tag: string;
-    count: number;
-  }>;
-  captionStats: {
-    averageLength: number;
-    longCaptionsPercentage: string;
-  };
-  activeFollowerEstimate: string;
-  engagementByType: Record<string, string>;
   detailedMetrics: {
     postingFrequency: {
       avgDays: string;
